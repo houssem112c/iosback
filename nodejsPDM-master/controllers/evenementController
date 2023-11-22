@@ -1,0 +1,154 @@
+const evenement = require('../models/evenement.js');
+const sydFunctions = require('../utils/syd-functions');
+
+exports.getAllevenements = async (req, res, next) => {
+    try {
+        const list = await evenement.find(); // Use "Evenement" instead of "evenement"
+        res.status(200).json({ message: "List of evenements", list: list });
+    } catch (error) {
+        console.log('error', error);
+        res.status(500).json({ message: 'Recovery failed!' });
+    }
+};
+
+exports.getSingleevenements = async (req, res, next) => {
+    const evenementId = req.params.evenementId;
+    try {
+        const evenement = await Evenement.findById(evenementId); 
+        if (!evenement) {
+            return res.status(404).json({ message: 'evenement not found!' });
+        }
+        res.status(200).json({ message: "Retrieved evenement", evenement: evenement });
+    } catch (error) {
+        console.log('error', error);
+        res.status(500).json({ message: 'Recovery failed!' });
+    }
+
+};
+
+exports.addevenement = async (req, res, next) => {
+    const errorMessage = sydFunctions.validators(req, res);
+    console.log('Retrieved errorMessage', errorMessage);
+    if (errorMessage) {
+        return res.status(422).json({ message: 'Validation error', error: errorMessage });
+    }
+    if (!req.file) {
+      return res.status(422).json({ message: 'Please add an image!' });
+   }
+
+    const Evenement = new evenement({
+        eventName: req.body.eventName,
+        eventDate: req.body.eventDate,
+        textwhats: req.body.textwhats,
+        eventLocation: req.body.eventLocation,
+        eventDescription: req.body.eventDescription,
+        imageURL: req.file.path.replace("\\", "/") 
+    });
+
+    try {
+        const result = await Evenement.save()
+        console.log('result', result);
+        return res.status(201).json({
+            message: "evenement is successfully added!",
+            evenement: result
+        });
+    } catch (error) {
+        console.log('error', error);
+       // if (req.file) {
+        //   sydFunctions.deleteImage(evenement.imageURL);
+       // }
+        res.status(500).json({ message: 'Creation failed!' });
+    }
+};
+
+exports.updateevenement = async (req, res, next) => {
+    const errorMessage = sydFunctions.validators(req, res);
+    console.log('Retrieved errorMessage', errorMessage);
+    if (errorMessage) {
+        return res.status(422).json({ message: 'Validation failed!', error: errorMessage });
+    }
+
+    let imageURL = req.body.imageURL;
+    if (req.file) {
+       imageURL = req.file.path.replace("\\", "/");
+    }
+   if (!imageURL) {
+      return res.status(422).json({ message: 'Please add an image!' });
+    }
+
+    const evenementId = req.params.evenementId;
+    try {
+        const evenement = await evenement.findById(evenementId);
+        if (!evenement) {
+            sydFunctions.deleteImage(req.file.path.replace("\\", "/"));
+            return res.status(404).json({ message: 'evenement not found!' });
+        }
+     if (imageURL !== evenement.imageURL) {
+          sydFunctions.deleteImage(evenement.imageURL);
+       }
+        evenement.eventName = req.body.eventName;
+        evenement.eventDate = req.body.eventDate;
+        evenement.textwhats = req.body.textwhats;
+        evenement.eventLocation = req.body.eventLocation;
+        evenement.eventDescription = req.body.eventDescription;
+     evenement.imageURL = imageURL;
+        const result = await evenement.save();
+        res.status(200).json({ 'message': 'Modification successfully completed!', evenement: result });
+
+    } catch (error) {
+        console.log('error', error);
+        if (req.file) {
+            sydFunctions.deleteImage(evenement.imageURL);
+        }
+        res.status(500).json({ message: 'Update failed!' });
+    }
+
+};
+
+exports.deleteevenement = async (req, res, next) => {
+    const EvenementId = req.params.evenementId;
+    try {
+        const Evenement = await evenement.findById(EvenementId);
+        if (!Evenement) {
+            return res.status(404).json({ message: 'evenement not found!' });
+        }
+
+       sydFunctions.deleteImage(Evenement.imageURL);
+        await evenement.findByIdAndRemove(EvenementId);
+        res.status(200).json({ 'message': 'Deletion completed successfully!' });
+
+    } catch (error) {
+        console.log('error', error);
+        res.status(500).json({ message: 'Delete failed!' });
+    }
+};
+
+exports.toggleFavoritesStatus = async (req, res) => {
+    const { evenementId } = req.params;
+  
+    try {
+        const favorites = await evenement.findById(evenementId);
+  
+        if (!favorites) {
+            return res.status(404).json({ message: 'Evenement not found' });
+        }
+  
+        favorites.isFavorites = !favorites.isFavorites;
+  
+        await favorites.save();
+  
+        return res.json({ message: 'Favorite status updated successfully', favorites });
+    } catch (error) {
+        console.error('Error toggling favorite status:', error);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+  };
+  exports.fetchAllLikedEvenements = async (req, res, next) => {
+    try {
+        const likedEvenements = await evenement.find({ isFavorites: true });
+        res.status(200).json({ message: "List of liked evenements", list: likedEvenements });
+    } catch (error) {
+        console.error('Error fetching all liked evenements:', error);
+        res.status(500).json({ message: 'Fetching liked evenements failed!' });
+    }
+  };
