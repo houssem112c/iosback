@@ -41,7 +41,10 @@ app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     next();
-});const userRouter = require('./routes/userRoutes');
+});
+const verifyuser = require('./routes/verificationTokenRoutes');
+app.use('/api/verify', verifyuser);
+const userRouter = require('./routes/userRoutes');
 app.use('/api/users', userRouter);
 app.use('/comments', commentRoutes); // Include Comment Routes
 app.use('/', lessonRoutes);

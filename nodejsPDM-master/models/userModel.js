@@ -53,20 +53,15 @@ const UserSchema = new mongoose.Schema({
   phonenumber: {
     type: Number,
     required: false,
-    validate: {
-      validator: (value) => {
-        return value.toString().length === 8;
-      },
-      message: 'Phone number must be exactly 8 digits long.',
-    },
+    optional: true,
   },
   isActive: {
     type: Boolean,
-    default: true,
+    default: false,
   },
   isBanned: {
     type: Boolean,
-    default: true,
+    default: false,
   },
   isVerified: {
     type: Boolean,

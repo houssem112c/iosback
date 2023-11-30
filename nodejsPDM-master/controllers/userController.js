@@ -4,32 +4,29 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const config = require('../config');
 const User = require('../models/userModel');
-const multer = require('multer');
-const uploadMiddleware = multer({ dest: 'public/images' });
+//const identicon = require('identicon.js');
+//const { default: Identicon } = require('identicon.js');
 
 
-// Create a transporter with your email service provider's SMTP configuration
-
-
-// Sign up a new user
 async function signup(req, res) {
   // Hash the password
   console.log("Fullname before hashing:", req.body.fullname);
   console.log("Email before hashing:", req.body.email);
   console.log("Password before hashing:", req.body.password);
   const hashedPassword = await bcrypt.hash(req.body.password, 10);
-  //console.log("Password before hashing:", hashedPassword);
 
-  // Get the profile picture file
-  //const profilePictureFile = req.files.profilePicture;
+/*  const identifier = `${req.body.email}-${Math.random().toString(36).substr(2, 9)}`;
 
-  // If the profile picture file is not defined, return an error
-  /*if (!profilePictureFile) {
-    return res.status(400).json({ message: 'Profile picture required' });
-  }*/
+  // Create an Identicon hash based on the identifier
+  const options = {
+    text: identifier,
+    size: 128, // Adjust the size as needed
+    format: 'png' // Choose the desired format
+  };
+*/
+  // Generate the profile picture using the hash
+ // const randomgenerated = new Identicon(identifier, options);
 
-  // Save the profile picture file to the database
-  //const profilePicturePath = await saveProfilePictureFile(profilePictureFile);
 
   // Create a new user
   const user = new User({
@@ -39,7 +36,7 @@ async function signup(req, res) {
     password: hashedPassword,
     dateofbirth: req.body.dateofbirth,
     role: req.body.role,
-    //profilePicture: req.body.profilePicture,
+    //profilePicture: randomgenerated,
     //profilePicture: `${req.protocol}://${req.get('host')}/public/img/${req.files.profilePicture}`,
   });
   
@@ -65,11 +62,63 @@ async function signup(req, res) {
 }
 
 
+// user profile
+
+const authenticateUserProfile = async (req, res) => {
+  try {
+    const id = req.user._id;
+
+    // Fetch user data using userId
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).json({ message: `Cannot find any user with ID ${id}` });
+    }
+
+    // Extract relevant information from the user object
+    const { email, fullname, dateofbirth, role, profilepicture, profilebio, location, facebooklink, instagramlink, linkedinlink, phonenumber, isActive, isBanned, isVerified } = user;
+
+    res.status(200).json({
+      message: 'User profile authenticated successfully',
+      id,
+      email,
+      fullname,
+      dateofbirth,
+      role,
+      profilepicture,
+      profilebio,
+      location,
+      facebooklink,
+      instagramlink,
+      linkedinlink,
+      phonenumber,
+      isActive,
+      isBanned,
+      isVerified,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+  //fullname
+};
 
 // Saves the profile picture file to the database and returns the file path
+async function saveProfilePictureFile(profilePictureFile) {
+  // Generate a unique file name
+  const fileName = generateUniqueFileName(profilePictureFile.originalname);
 
+  // Save the profile picture file to the public/images directory
+  await profilePictureFile.mv(`public/images/${fileName}`);
 
-// 
+  // Return the file path
+  return `public/images/${fileName}`;
+}
+
+// Generates a unique file name
+function generateUniqueFileName(fileName) {
+  const timestamp = Date.now();
+  return `${timestamp}-${fileName}`;
+}
 // Sign in a user
 async function signin(req, res) {
   // Find the user by email
@@ -91,9 +140,10 @@ async function signin(req, res) {
   // Generate a JWT token
   const token = jwt.sign(
     {
-      id: user.id,
+      _id: user._id,
       email: user.email,
       role: user.role,
+      
     },
     config.SECRET_KEY,
     { expiresIn: '1h' }
@@ -144,7 +194,7 @@ async function updateUser(req, res) {
   
   // Update the user's fields
   const updatedFields = {};
-  for (const key of ['email', 'profilebio', 'fullname', 'location', 'facebooklink', 'instagramlink', 'linkedinlink', 'phonenumber', 'profilepicture']) {
+  for (const key of ['email', 'profilebio', 'fullname', 'location', 'facebooklink', 'instagramlink', 'phonenumber', 'profilepicture']) {
   if (req.body[key] !== undefined && req.body[key] !== null) {
   updatedFields[key] = req.body[key];
   }
@@ -156,7 +206,7 @@ async function updateUser(req, res) {
   // Save the user to the database
   await user.save();
   
-  // Send the updated user back to the client
+// Send the updated user back to the client
   res.status(200).json({ user });
   }
 // Ban a user
@@ -250,6 +300,30 @@ async function activateUser(req, res) {
   // Send a success response back to the client
   res.status(200).json({ message: 'User activated successfully' });
 }
+// reset password
+async function resetPassword(req, res) {
+  const userId = req.params.id;
+  const newPassword = req.params.newPassword;
+  try {
+    // Hash the new password before updating it
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update the user's password in the database
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { password: hashedPassword },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: `User with ID ${userId} not found` });
+    }
+
+    res.status(200).json({ message: 'Password reset successfully', updatedUser });
+  } catch (error) {
+    res.status(500).json({ message: `Error resetting password: ${error.message}` });
+  }
+}
 
 // Deactivate a user
 async function deactivateUser(req, res) {
@@ -283,6 +357,72 @@ async function getUsersByRole(req, res) {
   // Send the users back to the client
   res.status(200).json({ users });
 }
+
+async function deleteUser(req, res) {
+  const userId = req.params.id;
+  try {
+    const deletedUser = await User.findByIdAndDelete(userId);
+    res.status(200).json({ message: 'User deleted successfully', deletedUser });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+async function comparePassword(enteredPassword, storedPassword) {
+  try {
+    return await bcrypt.compare(enteredPassword, storedPassword);
+  } catch (error) {
+    throw new Error(`Error comparing passwords: ${error.message}`);
+  }
+}
+
+async function checkPassword(req, res) {
+  const userId = req.params.id;
+  const enteredPassword = req.body.password; // Assuming the password is sent in the request body
+
+  try {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: `User with ID ${userId} not found` });
+    }
+
+    const isPasswordMatch = await comparePassword(enteredPassword, user.password);
+
+    if (isPasswordMatch) {
+      return res.status(200).json({ message: 'Password is correct' });
+    } else {
+      return res.status(401).json({ message: 'Password is incorrect' });
+    }
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
+
+
+/*
+async function uploadrandomprofilepicture(req, res) {
+  //const file = req.file;
+  const userId = req.params.id;// Assume 'req.user' contains the logged-in user's information
+
+  // Generate a random identifier based on the user ID
+  const identifier = `${userId}-${Math.random().toString(36).substr(2, 9)}`;
+
+  // Create an Identicon hash based on the identifier
+  const hash = identicon.generate({
+    text: identifier,
+    size: 128, // Adjust the size as needed
+    format: 'png' // Choose the desired format
+  });
+
+  // Generate the profile picture using the hash
+  const profilePicture = identicon.generateFromHash(hash);
+
+  // Save the profile picture data to the user's record
+  await User.updateOne({ _id: userId }, { profilePicture });
+
+  // Respond with a success message or redirect to the user's profile page
+  res.send('Profile picture updated successfully');
+}*/
 module.exports = {
   signup,
   signin,
@@ -295,4 +435,9 @@ module.exports = {
   activateUser,
   deactivateUser,
   getUsersByRole,
+  authenticateUserProfile,
+  deleteUser,
+  checkPassword,
+  resetPassword,
+  
 };
