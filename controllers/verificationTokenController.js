@@ -1,6 +1,6 @@
 // controllers/verificationTokenController.js
 
-const VerificationToken = require('../models/verificationToken');
+const VerificationToken = require('../models/VerificationToken');
 const User = require('../models/userModel');
 const crypto = require('crypto');
 
