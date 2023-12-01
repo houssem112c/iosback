@@ -1,74 +1,59 @@
-# Ecolink
+# nodejs-crud-api
+Node.js, Express and MongodB: Create a Restfull API with images upload
 
+## What will you learn ?
+What will you learn by downloading my code?
+- Use of **express** to make API creation simple
+- Using **mongoose** to manage communication with Mongo DB
+- Image Upload with **multer**
+- Image deletion with the notions of paths and file system in node
+- Field validation using **express-validator**
+- Creation of reusable methods thanks to the concept of **modules**
+- Creation of a functional REST API with Node.js, Express and Mongo DB.
 
-<p align="center" width="100%">
-    <img width="33%" src="https://i.imgur.com/i0b4i9f.png">
-</p>
+Are you ready ? Let's go
 
+## Step 1: Installing dependencies
 
-![Swift](https://img.shields.io/badge/Swift-5.5-orange?style=flat-square) ![iOS](https://img.shields.io/badge/iOS-15.0-brightgreen?style=flat-square) ![SwiftUI](https://img.shields.io/badge/SwiftUI-2.0-blue?style=flat-square)
+Clone the repository then run **npm install**
 
-## Overview
+## Step 2: Link your api to Mongo DB
 
-Ecolink is an iOS mobile app crafted with SwiftUI, aimed at empowering users to actively contribute to environmental causes. Developed by Sameh ben amor, Houssem ben mabrouk, Daly tlili, Mohamed Ajili, Riahi Seif, and Zied abderrahim, the app presents a user-centric approach, offering modules that cover various aspects of environmental engagement.
+You can install mongodb locally or use Mongo Atlas (online). In both cases, go to the **app.js** file then replace the url **mongodb://localhost:27017/player-db** with your url. In my case I use Mongo DB locally. It is therefore available on port **27017**(by default) and the name of my database is **player-db**.
 
-## Modules
+## Step 3: Launch your project
 
-### 1. User
+To launch your project, just type the following command : **node app.js**. Your API will therefore run on port 3000
 
-The User module allows individuals to create profiles, customize preferences, and manage their engagement with environmental activities.
+## Step 4: Test the API endpoints
 
-### 2. Tracking and Rewards
+This is an API that manages players (football for example). A player is characterized by:
+* name: the name of the player
+* age: the player's age
+* bio: a brief biography of the player (at least 15 characters)
+* photoUrl: player photo
+* createdAt and updatedAt are generated automatically using the **timestamps: true** statement in the **models/player.js file**
 
-Track your environmental impact and earn rewards for sustainable actions. The Tracking and Rewards module incentivizes users to adopt eco-friendly practices.
+So we have a total of 5 routes
 
-### 3. Blogs
+1. Add player http://localhost:3000/api/v1/player
+2. List of all players http://localhost:3000/api/v1/players
+3. Find player by Id http://localhost:3000/api/v1/player/:playerId
+4. Update player http://localhost:3000/api/v1/player/:playerId
+5. Delete player http://localhost:3000/api/v1/player/:playerId
 
-Stay informed with the latest environmental news and insights. The Blogs module provides a platform for users to share articles, stories, and information related to ecological awareness.
+## Some precisions
 
-### 4. Events
+* When you add a player their photo is placed in the /images folder (make sure to create this folder at the same level as the controllers folder if it doesn't exist).
+* I delete player image if this image was replaced during the update (or if the player was deleted)
+* In the utils/syd-functions.js folder you will find reusable functions in the controllers/player.js
 
-Participate or organize environmental events. The Events module facilitates community engagement by connecting users with eco-friendly initiatives.
+## Examples of API tests with postman (in pictures)
 
-### 5. Lesson
+* Add Player
 
-Educational content to enhance environmental awareness. The Lesson module offers informative resources and courses to educate users about sustainable practices.
+<img src="https://i.ibb.co/TqTVxsn/add-player.png" alt="add-player" border="0">
 
-### 6. Store
+* List of players
+<img src="https://i.ibb.co/RSgvjLt/list-of-players.png" alt="list-of-players" border="0">
 
-Support eco-friendly products and initiatives. The Store module allows users to discover and purchase environmentally conscious products.
-
-## App Concept
-
-Ecolink introduces a unique approach where users can choose between being a "Contributor" or an "Organizer." Contributors actively participate in various environmental initiatives, while Organizers take the lead in planning and executing events for the greater good of the environment.
-
-Additionally, Ecolink enables users to contribute to Kickstarter projects dedicated to environmental causes, fostering a collaborative effort towards a sustainable future.
-
-## Getting Started
-
-To get started with Ecolink, follow these steps:
-
-1. Clone the repository.
-2. Open the project in Xcode.
-3. Build and run the app on your iOS device or simulator.
-
-## Contributing
-
-We welcome contributions to enhance Ecolink and make it an even more impactful tool for environmental advocacy. Check out our [Contribution Guidelines](CONTRIBUTING.md) to get started.
-
-## License
-
-Ecolink is licensed under the [MIT License](LICENSE). See the [LICENSE](LICENSE) file for more details.
-
-## Contact
-
-For inquiries and support, reach out to the Ecolink team:
-
-| Team Member          |
-|----------------------|
-| Sameh ben amor       |
-| Houssem ben mabrouk  |
-| Daly tlili           |
-| Mohamed Ajili        |
-| Riahi Seif           |
-| Zied abderrahim      |
