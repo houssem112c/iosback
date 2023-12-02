@@ -70,13 +70,13 @@ const authenticateUserProfile = async (req, res) => {
 
     // Fetch user data using userId
     const user = await User.findById(id);
-
+    
     if (!user) {
       return res.status(404).json({ message: `Cannot find any user with ID ${id}` });
     }
 
     // Extract relevant information from the user object
-    const { email, fullname, dateofbirth, role, profilepicture, profilebio, location, facebooklink, instagramlink, linkedinlink, phonenumber, isActive, isBanned, isVerified } = user;
+    const { email, fullname, dateofbirth, role, profilepicture, profilebio, location, phonenumber, isActive, isBanned, isVerified } = user;
 
     res.status(200).json({
       message: 'User profile authenticated successfully',
@@ -88,9 +88,6 @@ const authenticateUserProfile = async (req, res) => {
       profilepicture,
       profilebio,
       location,
-      facebooklink,
-      instagramlink,
-      linkedinlink,
       phonenumber,
       isActive,
       isBanned,
@@ -143,7 +140,10 @@ async function signin(req, res) {
       _id: user._id,
       email: user.email,
       role: user.role,
-      
+      dateofbirth: user.dateofbirth,
+      isActive: user.isActive,
+      isBanned: user.isBanned,
+      isVerified: user.isVerified,
     },
     config.SECRET_KEY,
     { expiresIn: '1h' }

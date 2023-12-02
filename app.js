@@ -9,6 +9,9 @@ const morgan = require('morgan');
 
 const lessonRoutes = require('./routes/lesson');
 const itemroutes = require('./routes/itemsRoute');
+
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./middleware/swagger');
 const app = express();
 
   
@@ -50,7 +53,22 @@ app.use('/comments', commentRoutes); // Include Comment Routes
 app.use('/', lessonRoutes);
 app.use('/apis', itemroutes);
 app.use("/api", evenementRoutes);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+/*
+https://ecolink.onrender.com
+example for api consumption use
+https://ecolink.onrender.com/api/users/signup
+https://ecolink.onrender.com/api/lessons
+
+*/
+
+
+// I integrated swagger for the server, it can be accessed via
+// https://ecolink.onrender.com/api-docs
+// Check the user routes file to understand how swagger annotations work
 app.listen(httpPort, () => {
 	console.log("Server is running on port " + httpPort);
 })
+
 
