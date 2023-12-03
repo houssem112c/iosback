@@ -194,12 +194,11 @@ async function updateUser(req, res) {
   
   // Update the user's fields
   const updatedFields = {};
-  for (const key of ['email', 'profilebio', 'fullname', 'location', 'facebooklink', 'instagramlink', 'phonenumber', 'profilepicture']) {
-  if (req.body[key] !== undefined && req.body[key] !== null) {
-  updatedFields[key] = req.body[key];
+  for (const key of ['email', 'profilebio', 'fullname', 'location', 'facebooklink', 'instagramlink', 'phonenumber', 'profilepicture', 'dateofbirth', 'role']) {
+    if (req.body[key] !== undefined && req.body[key] !== null) {
+      updatedFields[key] = req.body[key];
+    }
   }
-  }
-  
   // Set the user's fields
   Object.assign(user, updatedFields);
   
