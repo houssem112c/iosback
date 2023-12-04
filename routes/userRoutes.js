@@ -233,8 +233,8 @@ router.put('/users/:id/activate', userController.activateUser);
  *         description: User deactivated successfully
  *       404:
  *         description: User not found
- */
-router.put('/users/:id/deactivate', userController.deactivateUser);
+    */
+    router.put('/users/:id/deactivate', userController.deactivateUser);
 
 // Add Swagger documentation for other routes as needed
 
