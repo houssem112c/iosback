@@ -328,5 +328,25 @@ router.delete('/users/:id', userController.deleteUser);
 
 // Add Swagger documentation for other routes as needed
 
+/**
+ * @swagger
+ * /users:
+ *   get:
+ *     summary: Get all users
+ *     tags: [Users]
+ *     responses:
+ *       200:
+ *         description: Users retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 users:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/User'
+ */
+router.get('/users', userController.getAllUsers);
 
 module.exports = router;
