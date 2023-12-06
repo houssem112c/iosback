@@ -159,7 +159,7 @@ async function getAllUsers(req, res) {
   const users = await User.find();
 
   // Send the users back to the client
-  res.status(200).json({ users });
+  res.status(200).json({ list:users });
 }
 
 // Find a user by ID
