@@ -422,6 +422,72 @@ async function uploadrandomprofilepicture(req, res) {
   // Respond with a success message or redirect to the user's profile page
   res.send('Profile picture updated successfully');
 }*/
+
+async function getTotalUsersCount(req, res) {
+  try {
+    const users = await User.find();
+    const totalUsersCount = users.length;
+    res.status(200).json({ totalUsersCount });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+// Get the number of active users
+async function getActiveUsersCount(req, res) {
+  try {
+    const activeUsers = await User.find({ isActive: true });
+    const activeUsersCount = activeUsers.length;
+    res.status(200).json({ activeUsersCount });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+// Get the number of banned users
+async function getBannedUsersCount(req, res) {
+  try {
+    const bannedUsers = await User.find({ isBanned: true });
+    const bannedUsersCount = bannedUsers.length;
+    res.status(200).json({ bannedUsersCount });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+// Get the number of verified users
+async function getVerifiedUsersCount(req, res) {
+  try {
+    const verifiedUsers = await User.find({ isVerified: true });
+    const verifiedUsersCount = verifiedUsers.length;
+    res.status(200).json({ verifiedUsersCount });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+// Get the number of users with a specific role (replace 'desiredRole' with the actual role)
+async function getUsersCountByRole(req, res) {
+  const desiredRole = req.params.role;
+  try {
+    const usersWithRole = await User.find({ role: desiredRole });
+    const usersWithRoleCount = usersWithRole.length;
+    res.status(200).json({ usersWithRoleCount });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+// Get a creative statistic: Number of users with a profile picture
+async function getUsersWithProfilePictureCount(req, res) {
+  try {
+    const usersWithProfilePicture = await User.find({ profilePicture: { $exists: true } });
+    const usersWithProfilePictureCount = usersWithProfilePicture.length;
+    res.status(200).json({ usersWithProfilePictureCount });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
 module.exports = {
   signup,
   signin,
@@ -438,5 +504,10 @@ module.exports = {
   deleteUser,
   checkPassword,
   resetPassword,
-  
+  getTotalUsersCount,
+  getActiveUsersCount,
+  getBannedUsersCount,
+  getVerifiedUsersCount,
+  getUsersCountByRole,
+  getUsersWithProfilePictureCount,
 };

@@ -349,4 +349,11 @@ router.delete('/users/:id', userController.deleteUser);
  */
 router.get('/users', userController.getAllUsers);
 
+router.get('/totalUsersCount', userController.getTotalUsersCount);
+router.get('/activeUsersCount', userController.getActiveUsersCount);
+router.get('/bannedUsersCount', userController.getBannedUsersCount);
+router.get('/verifiedUsersCount', userController.getVerifiedUsersCount);
+router.get('/usersCountByRole/:role', userController.getUsersCountByRole);
+router.get('/usersWithProfilePictureCount', userController.getUsersWithProfilePictureCount);
+
 module.exports = router;
