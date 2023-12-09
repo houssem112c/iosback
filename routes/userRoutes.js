@@ -348,6 +348,8 @@ router.delete('/users/:id', userController.deleteUser);
  *                     $ref: '#/components/schemas/User'
  */
 router.get('/users', userController.getAllUsers);
+router.get('/search/:query', userController.searchUsers); // Use :query as a URL parameter
+router.get('/export', userController.exportUsers);
 
 router.get('/totalUsersCount', userController.getTotalUsersCount);
 router.get('/activeUsersCount', userController.getActiveUsersCount);

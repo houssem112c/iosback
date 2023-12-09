@@ -4,9 +4,42 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const config = require('../config');
 const User = require('../models/userModel');
+const ExcelJS = require('exceljs');
+
 //const identicon = require('identicon.js');
 //const { default: Identicon } = require('identicon.js');
 
+async function exportUsers(req, res) {
+  try {
+    // Fetch users from your database
+    const users = await User.find({}, { _id: 0, __v: 0 });
+
+    // Create an Excel workbook
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet('Sheet1');
+
+    // Add header row
+    sheet.addRow(['Full Name', 'Email', 'Role', 'Active', 'Banned', 'Verified']);
+
+    // Add user data rows
+    users.forEach(user => {
+      sheet.addRow([user.fullname, user.email, user.role, user.isActive, user.isBanned, user.isVerified]);
+    });
+
+    // Set up response headers
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', 'attachment; filename=users.xlsx');
+
+    // Send the Excel file as a response
+    await workbook.xlsx.write(res);
+
+    // End the response
+    res.end();
+  } catch (error) {
+    console.error('Error exporting users:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+}
 
 async function signup(req, res) {
   // Hash the password
@@ -488,6 +521,25 @@ async function getUsersWithProfilePictureCount(req, res) {
     res.status(500).json({ message: error.message });
   }
 }
+
+async function searchUsers(req, res) {
+  try {
+    const query = req.params.query.toLowerCase(); // Use req.params to get the query parameter
+
+    // Perform the search query on the user data
+    const filteredUsers = await User.find({
+      $or: [
+        { fullname: { $regex: query, $options: 'i' } }, // Case-insensitive regex search for fullname
+        { email: { $regex: query, $options: 'i' } },    // Case-insensitive regex search for email
+      ]
+    });
+
+    res.status(200).json({ filteredUsers });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
 module.exports = {
   signup,
   signin,
@@ -510,4 +562,6 @@ module.exports = {
   getVerifiedUsersCount,
   getUsersCountByRole,
   getUsersWithProfilePictureCount,
+  searchUsers,
+  exportUsers,
 };
