@@ -3,7 +3,7 @@
 const VerificationToken = require('../models/VerificationToken');
 const User = require('../models/userModel');
 const crypto = require('crypto');
-
+const bcrypt = require('bcrypt');
 // Function to generate a random 4-digit pin code
 function generatePin() {
   return Math.floor(1000 + Math.random() * 9000).toString();
@@ -54,7 +54,35 @@ async function verifyUser(userId, pin) {
   }
 }
 
+async function ForgotPassword(userId, pin, newpass) {
+  try {
+    const verificationToken = await VerificationToken.findOne({ userId, token: pin });
+
+    if (!verificationToken) {
+      return false; // Pin code does not match
+    }
+
+    if (newpass) {
+      // If newPassword is provided, reset the user's password
+      const hashedPassword = await bcrypt.hash(newpass, 10);
+
+      //const hashedPassword = crypto.createHash('sha256').update(newPassword).digest('hex');
+      await User.findByIdAndUpdate(userId, { password: hashedPassword });
+    }
+
+    // Remove the verification token from the collection
+    await VerificationToken.findOneAndDelete({ userId, token: pin });
+
+    return true; // Verification successful
+  } catch (error) {
+    console.error('Error verifying user:', error);
+    throw error;
+  }
+}
+
+
 module.exports = {
   generateVerificationToken,
   verifyUser,
+  ForgotPassword,
 };

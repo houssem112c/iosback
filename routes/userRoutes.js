@@ -357,5 +357,6 @@ router.get('/bannedUsersCount', userController.getBannedUsersCount);
 router.get('/verifiedUsersCount', userController.getVerifiedUsersCount);
 router.get('/usersCountByRole/:role', userController.getUsersCountByRole);
 router.get('/usersWithProfilePictureCount', userController.getUsersWithProfilePictureCount);
-
+//findUserIdByEmail
+router.get('/getbyemail/:email', userController.findUserIdByEmail);
 module.exports = router;

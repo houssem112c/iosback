@@ -540,6 +540,23 @@ async function searchUsers(req, res) {
   }
 }
 
+async function findUserIdByEmail(req, res) {
+  try {
+    const email = req.params.email;
+    const user = await User.findOne({ email });
+
+    if (user) {
+      res.status(200).json({ userId: user._id });
+    } else {
+      res.status(404).json({ message: "User not found" });
+    }
+  } catch (error) {
+    console.error('Error finding user by email:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
+
+
 module.exports = {
   signup,
   signin,
@@ -564,4 +581,5 @@ module.exports = {
   getUsersWithProfilePictureCount,
   searchUsers,
   exportUsers,
+  findUserIdByEmail,
 };
