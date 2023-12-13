@@ -1,33 +1,58 @@
 const Comment = require('../models/commentModel');
-const User = require('../models/userModel');
+const sydFunctions = require('../utils/syd-functions');
 
-const createComment = async (req, res) => {
-  const { lessonId, text } = req.body;
-
+const ObjectId = require("mongodb").ObjectId;
+exports.addComment = async (req, res) => {
   try {
+    const { lessonId, text } = req.body;
+    
+    const newComment = new Comment({ lessonId, text });
+    const savedComment = await newComment.save();
 
-    const comment = new Comment({ lessonId, text });
-    const savedComment = await comment.save();
-    res.json(savedComment);
+    res.status(201).json({ message: 'Comment added successfully', comment: savedComment });
   } catch (error) {
-    console.error('Error creating comment:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error('Error adding comment:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 };
 
-const getCommentsByLessonId = async (req, res) => {
-  const lessonId = req.params.lessonId;
-
-  try {
-    const comments = await Comment.find({ lessonId });
-    res.json(comments);
-  } catch (error) {
-    console.error(`Error fetching comments for lesson ID ${lessonId}:`, error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-};
-
-module.exports = {
-  createComment,
-  getCommentsByLessonId,
-};
+exports.getCommentsByLessonId = async (req, res) => {
+    try {
+      const { lessonId } = req.params;
+      
+      const comments = await Comment.find({ lessonId });
+  
+      res.status(200).json(comments);
+    } catch (error) {
+      console.error('Error fetching comments:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  };
+  
+  exports.reportComment = async (req, res) => {
+    try {
+      const { commentId } = req.params;
+  
+      // Find the comment by ID
+      const comment = await Comment.findById(commentId);
+  
+      // Check if the comment exists
+      if (!comment) {
+        return res.status(404).json({ error: 'Comment not found' });
+      }
+  
+      // Check if the comment has already been reported
+      if (comment.reported) {
+        return res.status(400).json({ error: 'Comment already reported' });
+      }
+  
+      // Update the reported field in the comment document
+      comment.reported = true;
+      await comment.save();
+  
+      res.status(200).json({ message: 'Comment reported successfully' });
+    } catch (error) {
+      console.error('Error reporting comment:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  };

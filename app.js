@@ -3,16 +3,17 @@ const mongoose = require('mongoose');
 const path = require('path');
 const bodyParser = require('body-parser');
 const httpPort = 5001;
+
 const evenementRoutes = require("./routes/evenement");
-const commentRoutes = require('./routes/commentRoutes');
+const boutiqueRoutes = require("./routes/projet");
 const morgan = require('morgan');
 
-const lessonRoutes = require('./routes/lesson');
 const itemroutes = require('./routes/itemsRoute');
 
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./middleware/swagger');
 const app = express();
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
   
   const mongoUrl = "mongodb+srv://damarjy:HouHou1432@cluster0.tayz7nb.mongodb.net/ecolink";
@@ -37,7 +38,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(bodyParser.json());
-app.use('/images', express.static(path.join(__dirname, 'images')));
+app.use('/images', express.static(path.join(__dirname, 'imageRes')));
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -49,8 +50,7 @@ const verifyuser = require('./routes/verificationTokenRoutes');
 app.use('/api/verify', verifyuser);
 const userRouter = require('./routes/userRoutes');
 app.use('/api/users', userRouter);
-app.use('/comments', commentRoutes); // Include Comment Routes
-app.use('/', lessonRoutes);
+app.use("/", boutiqueRoutes)
 app.use('/apis', itemroutes);
 app.use("/api", evenementRoutes);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
