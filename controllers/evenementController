@@ -60,7 +60,24 @@ exports.addevenement = async (req, res, next) => {
         res.status(500).json({ message: 'Creation failed!' });
     }
 };
-
+exports.searchEvenements = async (req, res, next) => {
+    const query = req.params.query; // Retrieve the search query from URL params
+  
+    try {
+      const searchResults = await evenement.find({
+        $or: [
+          { eventName: { $regex: new RegExp(query, 'i') } },
+          { eventLocation: { $regex: new RegExp(query, 'i') } },
+          // Add more fields as needed for the search
+        ],
+      });
+  
+      res.status(200).json({ message: `Search results for '${query}'`, list: searchResults });
+    } catch (error) {
+      console.error('Error searching evenements:', error);
+      res.status(500).json({ message: 'Search failed!' });
+    }
+  };
 exports.updateevenement = async (req, res, next) => {
     const errorMessage = sydFunctions.validators(req, res);
     console.log('Retrieved errorMessage', errorMessage);

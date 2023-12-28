@@ -13,43 +13,6 @@ const transporter = nodemailer.createTransport({
     pass: "less koex thji wkgc", // Replace with your Gmail password
   },
 });
-/*
-export async function sendmail(req, res) {
-  try {
-    const template = await fs.readFile('./templates/mail-templates/ResetMyPassword/index.html', 'utf-8');
-    const compiledTemplate = handlebars.compile(template);
-    const data = {
-      first_name: req.body.first_name,
-      code: req.body.code
-    };
-    const renderedTemplate = compiledTemplate(data);
-
-    const mailOptions = {
-      from: MAILER_DISPLAY_NAME,
-      to: req.body.to,
-      subject: 'Password Reset',
-      html: renderedTemplate,
-    };
-
-    smtpTransport.sendMail(mailOptions, function (err) {
-      if (!err) {
-        return res.json({ 
-          message: "Veuillez vérifier votre e-mail pour plus d'instructions",
-        });
-      } else {
-        res.status(500).json({
-          success: false,
-          message: err,
-        });
-      }
-    });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-
-
-
-*/
 
 // Generate and send verification token to the user's email
 router.post("/generate/:id", async (req, res) => {
