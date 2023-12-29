@@ -14,7 +14,7 @@ exports.getAllevenements = async (req, res, next) => {
 exports.getSingleevenements = async (req, res, next) => {
     const evenementId = req.params.evenementId;
     try {
-        const evenement = await Evenement.findById(evenementId); 
+        const evenement = await evenement.findById(evenementId); 
         if (!evenement) {
             return res.status(404).json({ message: 'evenement not found!' });
         }

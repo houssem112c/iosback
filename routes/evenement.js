@@ -12,13 +12,13 @@ router.get('/evenements/search/:query', evenementController.searchEvenements);
 router.get("/evenements", evenementController.getAllevenements);
 
 // Get a specific evenement by ID
-router.get("/evenements/:id", evenementController.getSingleevenements);
+router.get("/evenements/:evenementId", evenementController.getSingleevenements);
 
 // Update an evenement by ID
 router.put("/evenements/:id", uploadImage, evenementController.updateevenement);
 
 // Delete an evenement by ID
-router.delete("/evenements/:id", evenementController.deleteevenement);
+router.delete("/evenements/:evenementId", evenementController.deleteevenement);
 
 router.get('/evenement/allLikedEvenement', evenementController.fetchAllLikedEvenements);
 
