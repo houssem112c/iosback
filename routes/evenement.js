@@ -6,7 +6,7 @@ const evenementController = require('../controllers/evenementController');
 const uploadImage = require('../middleware/upload-image');
 
 // Create a new evenement
-router.post("/evenement",uploadImage, evenementController.addevenement);
+router.post("/evenement", evenementController.addevenement);
 router.get('/evenements/search/:query', evenementController.searchEvenements);
 // Get all evenements
 router.get("/evenements", evenementController.getAllevenements);
