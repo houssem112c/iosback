@@ -127,7 +127,7 @@ exports.deleteevenement = async (req, res, next) => {
             return res.status(404).json({ message: 'evenement not found!' });
         }
 
-       sydFunctions.deleteImage(Evenement.imageURL);
+       //sydFunctions.deleteImage(Evenement.imageURL);
         await evenement.findByIdAndRemove(EvenementId);
         res.status(200).json({ 'message': 'Deletion completed successfully!' });
 
