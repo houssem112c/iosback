@@ -58,22 +58,21 @@ exports.addevenement = async (req, res, next) => {
     }
 };
 exports.searchEvenements = async (req, res, next) => {
-    const query = req.params.query; // Retrieve the search query from URL params
-  
     try {
-      const searchResults = await evenement.find({
-        $or: [
-          { eventName: { $regex: new RegExp(query, 'i') } },
-          { eventLocation: { $regex: new RegExp(query, 'i') } },
-          // Add more fields as needed for the search
-        ],
-      });
-  
-      res.status(200).json({ message: `Search results for '${query}'`, list: searchResults });
-    } catch (error) {
-      console.error('Error searching evenements:', error);
-      res.status(500).json({ message: 'Search failed!' });
-    }
+        const query = req.params.query.toLowerCase(); // Use req.params to get the query parameter
+    
+        // Perform the search query on the user data
+        const filteredEvents = await evenement.find({
+          $or: [
+            { eventName: { $regex: query, $options: 'i' } }, // Case-insensitive regex search for fullname
+            { eventLocation: { $regex: query, $options: 'i' } },    // Case-insensitive regex search for email
+          ]
+        });
+    
+        res.status(200).json({ filteredEvents });
+      } catch (error) {
+        res.status(500).json({ message: error.message });
+      }
   };
 exports.updateevenement = async (req, res, next) => {
     const errorMessage = sydFunctions.validators(req, res);
