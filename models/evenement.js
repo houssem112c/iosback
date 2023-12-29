@@ -12,7 +12,7 @@ const evenementSchema = mongoose.Schema({
   },
   textwhats: {
     type: String,
-    required: true,
+    required: false,
   },
   eventLocation: {
     type: String,
