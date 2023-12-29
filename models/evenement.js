@@ -8,7 +8,7 @@ const evenementSchema = mongoose.Schema({
   },
   eventDate: {
     type: Date,
-    required: true,
+    required: false,
   },
   textwhats: {
     type: String,
@@ -26,7 +26,7 @@ const evenementSchema = mongoose.Schema({
 
  imageURL: {
     type: String,
-    
+    required: false,
   },
 });
 const Evenement = mongoose.model("Evenement", evenementSchema ,"evenement" );
