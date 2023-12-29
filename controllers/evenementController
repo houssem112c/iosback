@@ -35,11 +35,11 @@ exports.addevenement = async (req, res, next) => {
    
     const Evenement = new evenement({
         eventName: req.body.eventName,
-        eventDate: req.body.eventDate,
-        textwhats: req.body.textwhats,
+        //eventDate: req.body.eventDate,
+        //textwhats: req.body.textwhats,
         eventLocation: req.body.eventLocation,
-        eventDescription: req.body.eventDescription,
-        imageURL: req.file.path.replace("\\", "/") 
+        eventDescription: req.body.eventDescription/*,
+        imageURL: req.file.path.replace("\\", "/") */
     });
 
     try {
