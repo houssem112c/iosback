@@ -78,28 +78,38 @@ exports.searchEvenements = async (req, res, next) => {
   }
 };
 exports.updateevenement = async (req, res, next) => {
-  const evenementId = req.params.id;
-  try {
-    const evenement = await evenement.findById(evenementId);
-    evenement.eventName = req.body.eventName;
-    evenement.eventDate = req.body.eventDate;
-    evenement.textwhats = req.body.textwhats;
-    evenement.eventLocation = req.body.eventLocation;
-    evenement.eventDescription = req.body.eventDescription;
-    const result = await evenement.save();
-    res
-      .status(200)
-      .json({
-        message: "Modification successfully completed!",
-        evenement: result,
-      });
-  } catch (error) {
-    console.log("error", error);
+    const evenementId = req.params.id;
 
-    res
-      .status(500)
-      .json({ error , message: "Modification failed!", evenementId });
-  }
+    try {
+      // Find the event by ID
+      const evenement = await evenement.findById(evenementId);
+    
+      // If the event does not exist, return a 404 error
+      if (!evenement) {
+        return res.status(404).json({ message: 'Event not found' });
+      }
+    
+      // Update the event's fields
+      const updatedFields = {};
+      for (const key of ['eventName', 'eventDate', 'textwhats', 'eventLocation', 'eventDescription']) {
+        if (req.body[key] !== undefined && req.body[key] !== null) {
+          updatedFields[key] = req.body[key];
+        }
+      }
+    
+      // Set the event's fields
+      Object.assign(evenement, updatedFields);
+    
+      // Save the event to the database
+      const result = await evenement.save();
+    
+      // Send the updated event back to the client
+      res.status(200).json({ result });
+    } catch (error) {
+      console.log('error', error);
+      res.status(500).json({ message: 'Update failed!' });
+    }
+    
 };
 
 exports.deleteevenement = async (req, res, next) => {
