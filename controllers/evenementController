@@ -75,19 +75,7 @@ exports.searchEvenements = async (req, res, next) => {
       }
   };
 exports.updateevenement = async (req, res, next) => {
-    /*const errorMessage = sydFunctions.validators(req, res);
-    console.log('Retrieved errorMessage', errorMessage);
-    if (errorMessage) {
-        return res.status(422).json({ message: 'Validation failed!', error: errorMessage });
-    }
 
-    let imageURL = req.body.imageURL;
-    if (req.file) {
-       imageURL = req.file.path.replace("\\", "/");
-    }
-   if (!imageURL) {
-      return res.status(422).json({ message: 'Please add an image!' });
-    }*/
 
     const evenementId = req.params.id;
     try {
