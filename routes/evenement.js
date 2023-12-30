@@ -15,7 +15,7 @@ router.get("/evenements", evenementController.getAllevenements);
 router.get("/evenements/:evenementId", evenementController.getSingleevenements);
 
 // Update an evenement by ID
-router.put("/evenements/:id", evenementController.updateevenement);
+router.put("/evenements/:evenementId", evenementController.updateevenement);
 
 // Delete an evenement by ID
 router.delete("/evenements/:evenementId", evenementController.deleteevenement);

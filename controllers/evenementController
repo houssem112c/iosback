@@ -78,14 +78,14 @@ exports.searchEvenements = async (req, res, next) => {
   }
 };
 exports.updateevenement = async (req, res, next) => {
-    const evenementId = req.params.id;
+    const evenementId = req.params.evenementId;
 
     try {
       // Find the event by ID
-      const evenement = await evenement.findById(evenementId);
+      const Evenement = await evenement.findById(evenementId);
     
       // If the event does not exist, return a 404 error
-      if (!evenement) {
+      if (!Evenement) {
         return res.status(404).json({ message: 'Event not found' });
       }
     
@@ -98,13 +98,13 @@ exports.updateevenement = async (req, res, next) => {
       }
     
       // Set the event's fields
-      Object.assign(evenement, updatedFields);
+      Object.assign(Evenement, updatedFields);
     
       // Save the event to the database
-      const result = await evenement.save();
+      await Evenement.save();
     
       // Send the updated event back to the client
-      res.status(200).json({ result });
+      res.status(200).json({ Evenement });
     } catch (error) {
       console.log('error', error);
       res.status(500).json({ message: 'Update failed!' });
