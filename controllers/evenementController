@@ -75,7 +75,7 @@ exports.searchEvenements = async (req, res, next) => {
       }
   };
 exports.updateevenement = async (req, res, next) => {
-    const errorMessage = sydFunctions.validators(req, res);
+    /*const errorMessage = sydFunctions.validators(req, res);
     console.log('Retrieved errorMessage', errorMessage);
     if (errorMessage) {
         return res.status(422).json({ message: 'Validation failed!', error: errorMessage });
@@ -87,32 +87,28 @@ exports.updateevenement = async (req, res, next) => {
     }
    if (!imageURL) {
       return res.status(422).json({ message: 'Please add an image!' });
-    }
+    }*/
 
-    const evenementId = req.params.evenementId;
+    const evenementId = req.params.id;
     try {
         const evenement = await evenement.findById(evenementId);
-        if (!evenement) {
+        /*if (!evenement) {
             sydFunctions.deleteImage(req.file.path.replace("\\", "/"));
             return res.status(404).json({ message: 'evenement not found!' });
-        }
-     if (imageURL !== evenement.imageURL) {
-          sydFunctions.deleteImage(evenement.imageURL);
-       }
+        }*/
+    
         evenement.eventName = req.body.eventName;
         evenement.eventDate = req.body.eventDate;
         evenement.textwhats = req.body.textwhats;
         evenement.eventLocation = req.body.eventLocation;
         evenement.eventDescription = req.body.eventDescription;
-     evenement.imageURL = imageURL;
+     //evenement.imageURL = imageURL;
         const result = await evenement.save();
         res.status(200).json({ 'message': 'Modification successfully completed!', evenement: result });
 
     } catch (error) {
         console.log('error', error);
-        if (req.file) {
-            sydFunctions.deleteImage(evenement.imageURL);
-        }
+        
         res.status(500).json({ message: 'Update failed!' });
     }
 
