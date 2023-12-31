@@ -3,10 +3,9 @@ const mongoose = require('mongoose');
 const path = require('path');
 const bodyParser = require('body-parser');
 const httpPort = 5001;
-const boutiqueRoutes = require("./routes/blog");
 
 const evenementRoutes = require("./routes/evenement");
-const lessonRoutes = require("./routes/projet");
+const boutiqueRoutes = require("./routes/projet");
 const morgan = require('morgan');
 
 const itemroutes = require('./routes/itemsRoute');
@@ -51,11 +50,10 @@ const verifyuser = require('./routes/verificationTokenRoutes');
 app.use('/api/verify', verifyuser);
 const userRouter = require('./routes/userRoutes');
 app.use('/api/users', userRouter);
-app.use("/", lessonRoutes)
+app.use("/", boutiqueRoutes)
 app.use('/apis', itemroutes);
 app.use("/api", evenementRoutes);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-app.use("/projet", boutiqueRoutes)
 
 /*
 https://ecolink.onrender.com
