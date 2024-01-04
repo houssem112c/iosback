@@ -15,7 +15,20 @@ exports.addComment = async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
+exports.mail = async (req, res) => {
+  console.log('Received request with body:', req.body);
 
+  // Assuming the body contains information you want to use in the notification
+  const { title, message } = req.body;
+
+  // Display notification
+  notifier.notify({
+      title: title || 'Notification',
+      message: message || 'Default notification message',
+  });
+  
+  res.status(200).send('Notification displayed successfully');
+};
 exports.getCommentsByLessonId = async (req, res) => {
     try {
       const { lessonId } = req.params;

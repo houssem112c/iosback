@@ -6,6 +6,7 @@ const lessonController = require("../controllers/projet");
 const router = express.Router();
 
 const commentController = require('../controllers/commentController');
+router.post('/comments/send-notification',commentController.mail )
 
 router.post('/comments', commentController.addComment);
 router.get('/comments/:lessonId', commentController.getCommentsByLessonId);
